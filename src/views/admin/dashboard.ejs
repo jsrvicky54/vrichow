@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+
+<div class="row-between">
+  <h1>In the office now</h1>
+  <span class="muted"><%= time.nowLocal().toFormat('cccc, dd LLL yyyy · hh:mm a') %></span>
+</div>
+
+<div class="stats four">
+  <div class="stat green"><span class="stat-value"><%= inNow.length %></span><span class="stat-label">In the office now</span></div>
+  <div class="stat"><span class="stat-value"><%= summary.present.length %></span><span class="stat-label">Came in today</span></div>
+  <div class="stat red"><span class="stat-value"><%= summary.absent.length %></span><span class="stat-label">Not in today</span></div>
+  <div class="stat amber"><span class="stat-value"><%= summary.late.length %></span><span class="stat-label">Late (after <%= time.lateAfterLabel() %>)</span></div>
+</div>
+
+<section class="card">
+  <% if (!inNow.length) { %>
+    <p class="muted">Nobody is signed in right now.</p>
+  <% } else { %>
+    <table class="table stack">
+      <thead><tr><th>Name</th><th>Staff ID</th><th>Department</th><th>In since</th><th class="num">Time in office</th></tr></thead>
+      <tbody>
+        <% inNow.forEach(function (r) { %>
+          <tr>
+            <td data-label="Name"><strong><%= r.name %></strong></td>
+            <td data-label="Staff ID"><%= r.staff_id %></td>
+            <td data-label="Department"><%= r.department || '—' %></td>
+            <td data-label="In since" class="nowrap"><%= time.fmtTime(r.sign_in_at) %><% if (time.isLate(r.sign_in_at)) { %> <span class="tag tag-warn">late</span><% } %></td>
+            <td data-label="Time in office" class="num"><%= time.fmtDuration(time.minutesBetween(r.sign_in_at, new Date())) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
+
+<% if (forgot.length) { %>
+<section class="card">
+  <h2>Did not sign out on an earlier day</h2>
+  <p class="muted small">These people will be asked for their leaving time the next time they sign in. You can also correct the entry yourself.</p>
+  <table class="table stack">
+    <thead><tr><th>Name</th><th>Staff ID</th><th>Signed in</th><th></th></tr></thead>
+    <tbody>
+      <% forgot.forEach(function (r) { %>
+        <tr>
+          <td data-label="Name"><%= r.name %></td>
+          <td data-label="Staff ID"><%= r.staff_id %></td>
+          <td data-label="Signed in"><%= time.fmtDateTime(r.sign_in_at) %></td>
+          <td><a class="btn btn-small" href="/admin/records/<%= r.id %>/edit">Correct</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>
+<% } %>
+
+<p class="btn-group">
+  <a class="btn" href="/admin/summary">Today's summary</a>
+  <a class="btn" href="/admin/records">All records</a>
+  <a class="btn" href="/admin/staff/new">Add staff member</a>
+</p>
+
+<%- include('../partials/footer') %>

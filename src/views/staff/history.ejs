@@ -1,0 +1,43 @@
+<%- include('../partials/header') %>
+
+<section class="card">
+  <div class="month-nav">
+    <a class="btn btn-small" href="/staff/history?month=<%= prevMonth %>" aria-label="Previous month">← Prev</a>
+    <h1><%= monthLabel %></h1>
+    <% if (nextMonth) { %>
+      <a class="btn btn-small" href="/staff/history?month=<%= nextMonth %>" aria-label="Next month">Next →</a>
+    <% } else { %><span class="btn btn-small disabled" aria-hidden="true">Next →</span><% } %>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-value"><%= time.fmtDuration(totalMinutes) %></span><span class="stat-label">Total hours this month</span></div>
+    <div class="stat"><span class="stat-value"><%= days %></span><span class="stat-label">Days attended</span></div>
+  </div>
+
+  <% if (!rows.length) { %>
+    <p class="muted">No entries for this month.</p>
+  <% } else { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Date</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th></tr></thead>
+        <tbody>
+          <% rows.forEach(function (r) { %>
+            <tr>
+              <td><%= time.toLocal(r.sign_in_at).toFormat('ccc dd LLL') %></td>
+              <td><%= time.fmtTime(r.sign_in_at) %></td>
+              <td>
+                <%= r.sign_out_at ? time.fmtTime(r.sign_out_at) : '—' %>
+                <% if (r.entered_late) { %><span class="tag tag-warn" title="Sign-out time was entered later">entered later</span><% } %>
+                <% if (r.edited_by) { %><span class="tag" title="Corrected by the admin">corrected</span><% } %>
+              </td>
+              <td class="num"><%= r.minutes === null ? '—' : time.fmtDuration(r.minutes) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+        <tfoot><tr><th colspan="3">Monthly total</th><th class="num"><%= time.fmtDuration(totalMinutes) %></th></tr></tfoot>
+      </table>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>

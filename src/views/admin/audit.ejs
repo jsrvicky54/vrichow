@@ -1,0 +1,42 @@
+<%- include('../partials/header') %>
+
+<h1>Audit log</h1>
+<p class="muted">Every change an admin makes to attendance entries or accounts. <%= total %> <%= total === 1 ? 'entry' : 'entries' %>.</p>
+
+<section class="card">
+  <% if (!entries.length) { %>
+    <p class="muted">No changes recorded yet.</p>
+  <% } else { %>
+    <table class="table stack">
+      <thead><tr><th>When</th><th>Admin</th><th>Action</th><th>Details</th></tr></thead>
+      <tbody>
+        <% var actionLabels = {
+             'attendance.update': 'Corrected entry', 'attendance.delete': 'Deleted entry',
+             'user.create': 'Created account', 'user.update': 'Edited account',
+             'user.deactivate': 'Deactivated account', 'user.activate': 'Activated account',
+             'user.reset_password': 'Reset password' }; %>
+        <% entries.forEach(function (e) { %>
+          <tr>
+            <td data-label="When" class="nowrap"><%= time.fmtDateTime(e.created_at) %></td>
+            <td data-label="Admin"><%= e.admin_name || 'deleted user' %></td>
+            <td data-label="Action">
+              <%= actionLabels[e.action] || e.action %>
+              <% if (e.attendance_id) { %><span class="muted small">#<%= e.attendance_id %></span><% } %>
+            </td>
+            <td data-label="Details"><%- include('../partials/audit-change', { entry: e }) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+
+  <% if (pages > 1) { %>
+    <div class="month-nav">
+      <% if (page > 1) { %><a class="btn btn-small" href="/admin/audit?page=<%= page - 1 %>">← Newer</a><% } else { %><span></span><% } %>
+      <span class="muted">Page <%= page %> of <%= pages %></span>
+      <% if (page < pages) { %><a class="btn btn-small" href="/admin/audit?page=<%= page + 1 %>">Older →</a><% } else { %><span></span><% } %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>

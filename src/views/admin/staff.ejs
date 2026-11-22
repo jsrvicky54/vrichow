@@ -1,0 +1,59 @@
+<%- include('../partials/header') %>
+
+<div class="row-between">
+  <h1>Staff</h1>
+  <a class="btn btn-primary" href="/admin/staff/new">+ Add staff member</a>
+</div>
+
+<section class="card">
+  <% if (!people.length) { %>
+    <p class="muted">No accounts yet.</p>
+  <% } else { %>
+  <table class="table stack">
+    <thead><tr><th>Name</th><th>Staff ID</th><th>Department</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      <% people.forEach(function (p) { %>
+        <tr class="<%= p.active ? '' : 'inactive' %>">
+          <td data-label="Name"><strong><%= p.name %></strong></td>
+          <td data-label="Staff ID"><%= p.staff_id %></td>
+          <td data-label="Department"><%= p.department || '—' %></td>
+          <td data-label="Role"><%= p.role === 'admin' ? 'Admin' : 'Staff' %></td>
+          <td data-label="Status">
+            <% if (p.active) { %><span class="tag tag-green">Active</span><% } else { %><span class="tag tag-red">Deactivated</span><% } %>
+            <% if (p.must_change_password) { %><span class="tag" title="Has not chosen their own password yet">temp password</span><% } %>
+          </td>
+          <td data-label="Actions">
+            <div class="btn-group">
+              <a class="btn btn-small" href="/admin/staff/<%= p.id %>/edit">Edit</a>
+              <% if (p.role === 'staff') { %>
+                <a class="btn btn-small" href="/admin/records?user=<%= p.id %>">Records</a>
+              <% } %>
+              <% if (p.id !== user.id) { %>
+                <form method="post" action="/admin/staff/<%= p.id %>/reset-password"
+                      data-confirm="Reset the password for <%= p.name %>? They will get a new temporary password.">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn btn-small" type="submit">Reset password</button>
+                </form>
+                <% if (p.active) { %>
+                  <form method="post" action="/admin/staff/<%= p.id %>/deactivate"
+                        data-confirm="Deactivate <%= p.name %>? They will no longer be able to log in. Their records are kept.">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn-small btn-danger" type="submit">Deactivate</button>
+                  </form>
+                <% } else { %>
+                  <form method="post" action="/admin/staff/<%= p.id %>/activate">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn-small" type="submit">Activate</button>
+                  </form>
+                <% } %>
+              <% } %>
+            </div>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>

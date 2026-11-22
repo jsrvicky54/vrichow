@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+
+<section class="card clock-card">
+  <div class="clock" data-server-now="<%= serverNow %>" data-tz="<%= time.TZ %>">
+    <div class="clock-time" id="clock-time"><%= time.nowLocal().toFormat('hh:mm:ss a') %></div>
+    <div class="clock-date" id="clock-date"><%= time.nowLocal().toFormat('cccc, dd LLLL yyyy') %></div>
+  </div>
+
+  <% if (status.state === 'in') { %>
+    <p class="status status-in"><span class="dot"></span> You are <strong>signed in</strong> since <%= time.fmtTime(status.open.sign_in_at) %></p>
+    <form method="post" action="/staff/sign-out" class="one-click">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-big btn-out">Sign out</button>
+    </form>
+
+  <% } else if (status.state === 'out') { %>
+    <p class="status status-out"><span class="dot"></span> You are <strong>signed out</strong></p>
+    <form method="post" action="/staff/sign-in" class="one-click">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn btn-big btn-in">Sign in</button>
+    </form>
+
+  <% } else { %>
+    <div class="alert alert-warning">
+      <strong>You did not sign out on <%= time.fmtDate(status.open.sign_in_at) %>.</strong><br>
+      You signed in at <%= time.fmtTime(status.open.sign_in_at) %> that day. Please enter the time you left.
+      It will be marked as "entered later".
+    </div>
+    <form method="post" action="/staff/missed-sign-out" class="missed-form one-click">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label for="left_at">Time you left on <%= time.fmtDate(status.open.sign_in_at) %></label>
+      <input id="left_at" name="left_at" type="time" required min="<%= time.timeValue(status.open.sign_in_at) %>">
+      <button type="submit" class="btn btn-primary btn-block">Save leaving time</button>
+    </form>
+  <% } %>
+  <p class="muted small">Time is taken from the office server, not your phone or computer.</p>
+</section>
+
+<section class="card">
+  <h2>Today</h2>
+  <% if (!today.length) { %>
+    <p class="muted">No entries yet today.</p>
+  <% } else { %>
+    <table class="table">
+      <thead><tr><th>Sign in</th><th>Sign out</th><th class="num">Hours</th></tr></thead>
+      <tbody>
+        <% today.forEach(function (r) { %>
+          <tr>
+            <td><%= time.fmtTime(r.sign_in_at) %></td>
+            <td><%= r.sign_out_at ? time.fmtTime(r.sign_out_at) : '—' %></td>
+            <td class="num"><%= r.minutes === null ? '—' : time.fmtDuration(r.minutes) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+      <% if (today.length > 1) { %>
+        <tfoot><tr><th colspan="2">Total</th><th class="num"><%= time.fmtDuration(todayMinutes) %></th></tr></tfoot>
+      <% } %>
+    </table>
+  <% } %>
+  <p><a href="/staff/history">See my full history →</a></p>
+</section>
+
+<%- include('../partials/footer') %>

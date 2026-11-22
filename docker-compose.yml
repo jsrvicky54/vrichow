@@ -1,0 +1,41 @@
+# Runs the app and PostgreSQL together.
+#   docker compose up -d --build
+#   docker compose exec app node scripts/create-admin.js
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: attendance
+      POSTGRES_USER: attendance
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-attendance}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U attendance -d attendance"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Uncomment to reach the database from your computer (e.g. for `npm run dev`):
+    # ports:
+    #   - "5432:5432"
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://attendance:${POSTGRES_PASSWORD:-attendance}@db:5432/attendance
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in a .env file next to docker-compose.yml}
+      NODE_ENV: ${NODE_ENV:-production}
+      TRUST_PROXY: ${TRUST_PROXY:-0}
+      APP_TIMEZONE: ${APP_TIMEZONE:-Asia/Kolkata}
+      LATE_AFTER: ${LATE_AFTER:-10:00}
+      SESSION_IDLE_MINUTES: ${SESSION_IDLE_MINUTES:-30}
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:

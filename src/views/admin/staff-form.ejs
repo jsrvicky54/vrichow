@@ -1,0 +1,45 @@
+<%- include('../partials/header') %>
+
+<section class="card narrow">
+  <h1><%= title %></h1>
+  <% if (error) { %><div class="alert alert-error" role="alert"><%= error %></div><% } %>
+
+  <form method="post" action="<%= isNew ? '/admin/staff' : '/admin/staff/' + person.id %>" autocomplete="off">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <label for="name">Full name</label>
+    <input id="name" name="name" value="<%= person.name %>" required maxlength="150">
+
+    <label for="staff_id">Staff ID (used to log in)</label>
+    <input id="staff_id" name="staff_id" value="<%= person.staff_id %>" required maxlength="50"
+           pattern="[A-Za-z0-9._\-]+" autocapitalize="none" spellcheck="false">
+    <p class="hint">Letters, numbers, dot, dash or underscore. Example: EMP042</p>
+
+    <label for="department">Department</label>
+    <input id="department" name="department" value="<%= person.department || '' %>" maxlength="100" list="department-list">
+    <datalist id="department-list">
+      <% departments.forEach(function (d) { %><option value="<%= d %>"><% }) %>
+    </datalist>
+
+    <% if (isNew) { %>
+      <label for="role">Account type</label>
+      <select id="role" name="role">
+        <option value="staff" <%= person.role === 'staff' ? 'selected' : '' %>>Staff (signs in and out)</option>
+        <option value="admin" <%= person.role === 'admin' ? 'selected' : '' %>>Admin (manages the system)</option>
+      </select>
+
+      <label for="password">Starting password (optional)</label>
+      <input id="password" name="password" type="password" minlength="8" maxlength="72" autocomplete="new-password">
+      <p class="hint">Leave empty to create a temporary password automatically. The person must choose their own password the first time they log in.</p>
+    <% } else { %>
+      <p class="muted small">Account type: <strong><%= person.role === 'admin' ? 'Admin' : 'Staff' %></strong></p>
+    <% } %>
+
+    <div class="btn-group">
+      <button type="submit" class="btn btn-primary"><%= isNew ? 'Create account' : 'Save changes' %></button>
+      <a class="btn" href="/admin/staff">Cancel</a>
+    </div>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>

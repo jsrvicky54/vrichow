@@ -1,0 +1,71 @@
+<%- include('../partials/header') %>
+
+<p><a href="<%= back %>">← Back to records</a></p>
+
+<div class="grid-2">
+  <section class="card">
+    <h1>Correct entry</h1>
+    <p><strong><%= entry.name %></strong> (<%= entry.staff_id %>)<%= entry.department ? ' · ' + entry.department : '' %></p>
+    <p class="muted small">
+      Originally created <%= time.fmtDateTime(entry.created_at) %>.
+      <% if (entry.entered_late) { %><span class="tag tag-warn">sign-out entered later</span><% } %>
+    </p>
+
+    <% if (error) { %><div class="alert alert-error" role="alert"><%= error %></div><% } %>
+
+    <form method="post" action="/admin/records/<%= entry.id %>">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="back" value="<%= back %>">
+
+      <div class="grid-2">
+        <div>
+          <label for="in_date">Sign-in date</label>
+          <input id="in_date" name="in_date" type="date" value="<%= form.in_date %>" required>
+        </div>
+        <div>
+          <label for="in_time">Sign-in time</label>
+          <input id="in_time" name="in_time" type="time" value="<%= form.in_time %>" required>
+        </div>
+        <div>
+          <label for="out_date">Sign-out date</label>
+          <input id="out_date" name="out_date" type="date" value="<%= form.out_date %>">
+        </div>
+        <div>
+          <label for="out_time">Sign-out time</label>
+          <input id="out_time" name="out_time" type="time" value="<%= form.out_time %>">
+        </div>
+      </div>
+      <p class="hint">Leave sign-out empty if the person is still in the office. Times are in <%= time.TZ %>.</p>
+
+      <label for="note">Note (reason for the change)</label>
+      <textarea id="note" name="note" maxlength="500" placeholder="e.g. Forgot to sign out, confirmed with manager"><%= form.note %></textarea>
+
+      <button type="submit" class="btn btn-primary">Save correction</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Change history</h2>
+    <% if (!history.length) { %>
+      <p class="muted">This entry has not been changed by an admin.</p>
+    <% } else { %>
+      <% history.forEach(function (h) { %>
+        <div class="history-item">
+          <p class="small"><strong><%= time.fmtDateTime(h.created_at) %></strong> by <%= h.admin_name || 'deleted user' %></p>
+          <%- include('../partials/audit-change', { entry: h }) %>
+        </div>
+      <% }) %>
+    <% } %>
+
+    <h2 class="mt">Delete entry</h2>
+    <p class="muted small">Only delete entries that were made by mistake. The deletion is recorded in the audit log.</p>
+    <form method="post" action="/admin/records/<%= entry.id %>/delete"
+          data-confirm="Delete this entry for <%= entry.name %> on <%= time.fmtDate(entry.sign_in_at) %>? This cannot be undone.">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="back" value="<%= back %>">
+      <button type="submit" class="btn btn-danger">Delete entry</button>
+    </form>
+  </section>
+</div>
+
+<%- include('../partials/footer') %>

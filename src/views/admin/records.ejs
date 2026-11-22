@@ -1,0 +1,95 @@
+<%- include('../partials/header') %>
+
+<h1>Attendance records</h1>
+
+<section class="card">
+  <form method="get" action="/admin/records" class="filters">
+    <div>
+      <label for="filter-mode">Show</label>
+      <select id="filter-mode" name="mode">
+        <option value="month" <%= filters.mode === 'month' ? 'selected' : '' %>>One month</option>
+        <option value="range" <%= filters.mode === 'range' ? 'selected' : '' %>>Date range</option>
+      </select>
+    </div>
+    <div data-mode="month">
+      <label for="month">Month</label>
+      <input id="month" name="month" type="month" value="<%= filters.month %>">
+    </div>
+    <div data-mode="range">
+      <label for="from">From</label>
+      <input id="from" name="from" type="date" value="<%= filters.from %>">
+    </div>
+    <div data-mode="range">
+      <label for="to">To</label>
+      <input id="to" name="to" type="date" value="<%= filters.to %>">
+    </div>
+    <div>
+      <label for="user">Person</label>
+      <select id="user" name="user">
+        <option value="">Everyone</option>
+        <% staff.forEach(function (s) { %>
+          <option value="<%= s.id %>" <%= filters.userId === s.id ? 'selected' : '' %>><%= s.name %> (<%= s.staff_id %>)<%= s.active ? '' : ' – deactivated' %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="actions">
+      <button type="submit" class="btn btn-primary">Show</button>
+      <a class="btn" href="/admin/records">Reset</a>
+    </div>
+  </form>
+</section>
+
+<% if (filters.error) { %><div class="alert alert-warning"><%= filters.error %></div><% } %>
+
+<section class="card">
+  <div class="row-between">
+    <h2><%= filters.label %> · <%= rows.length %> <%= rows.length === 1 ? 'entry' : 'entries' %> · <%= time.fmtDuration(totalMinutes) %></h2>
+    <div class="btn-group">
+      <a class="btn btn-small" href="/admin/records/export.csv?<%= filters.queryString %>">Download CSV</a>
+      <a class="btn btn-small" href="/admin/records/export.xlsx?<%= filters.queryString %>">Download Excel</a>
+    </div>
+  </div>
+
+  <% if (truncated) { %>
+    <div class="alert alert-info">Showing the latest <%= displayLimit %> entries. Download CSV or Excel to get all of them, or narrow the filter.</div>
+  <% } %>
+
+  <% if (!rows.length) { %>
+    <p class="muted">No entries found for this filter.</p>
+  <% } else { %>
+    <table class="table stack">
+      <thead>
+        <tr><th>Date</th><th>Name</th><th>Sign in</th><th>Sign out</th><th class="num">Hours</th><th>Notes</th><th></th></tr>
+      </thead>
+      <tbody>
+        <% rows.forEach(function (r) { %>
+          <tr>
+            <td data-label="Date" class="nowrap"><%= time.toLocal(r.sign_in_at).toFormat('ccc dd LLL yyyy') %></td>
+            <td data-label="Name"><strong><%= r.name %></strong> <span class="muted small"><%= r.staff_id %></span></td>
+            <td data-label="Sign in" class="nowrap"><%= time.fmtTime(r.sign_in_at) %><% if (time.isLate(r.sign_in_at)) { %> <span class="tag tag-warn">late</span><% } %></td>
+            <td data-label="Sign out" class="nowrap">
+              <% if (r.sign_out_at) { %>
+                <%= time.fmtTime(r.sign_out_at) %>
+                <% if (time.dateKey(r.sign_out_at) !== r.date_key) { %><span class="muted small">(<%= time.toLocal(r.sign_out_at).toFormat('dd LLL') %>)</span><% } %>
+              <% } else if (r.date_key === time.todayKey()) { %>
+                <span class="tag tag-green">still in</span>
+              <% } else { %>
+                <span class="tag tag-red">not signed out</span>
+              <% } %>
+            </td>
+            <td data-label="Hours" class="num"><%= r.minutes === null ? '—' : time.fmtDuration(r.minutes) %></td>
+            <td data-label="Notes">
+              <% if (r.entered_late) { %><span class="tag tag-warn">entered later</span><% } %>
+              <% if (r.edited_by) { %><span class="tag" title="Corrected by <%= r.edited_by_name || 'admin' %>">corrected</span><% } %>
+              <% if (r.note) { %><div class="small"><%= r.note %></div><% } %>
+            </td>
+            <td><a class="btn btn-small" href="/admin/records/<%= r.id %>/edit?back=<%= encodeURIComponent('/admin/records?' + filters.queryString) %>">Edit</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+      <tfoot><tr><th colspan="4">Total</th><th class="num"><%= time.fmtDuration(totalMinutes) %></th><th colspan="2"></th></tr></tfoot>
+    </table>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>

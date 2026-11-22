@@ -1,0 +1,72 @@
+<%- include('../partials/header') %>
+
+<div class="row-between">
+  <h1>Daily summary</h1>
+  <form method="get" action="/admin/summary">
+    <label for="date" class="sr-only">Date</label>
+    <input id="date" name="date" type="date" value="<%= day %>" max="<%= time.todayKey() %>" data-autosubmit>
+  </form>
+</div>
+<p class="muted"><%= dayLabel %><%= isToday ? ' (today)' : '' %> · Late means first sign-in after <%= time.lateAfterLabel() %></p>
+
+<div class="stats four">
+  <div class="stat"><span class="stat-value"><%= summary.total %></span><span class="stat-label">Staff</span></div>
+  <div class="stat green"><span class="stat-value"><%= summary.present.length %></span><span class="stat-label">Present</span></div>
+  <div class="stat red"><span class="stat-value"><%= summary.absent.length %></span><span class="stat-label">Absent</span></div>
+  <div class="stat amber"><span class="stat-value"><%= summary.late.length %></span><span class="stat-label">Late</span></div>
+</div>
+
+<section class="card">
+  <h2>Present (<%= summary.present.length %>)</h2>
+  <% if (!summary.present.length) { %>
+    <p class="muted">Nobody signed in on this day.</p>
+  <% } else { %>
+    <table class="table stack">
+      <thead><tr><th>Name</th><th>Department</th><th>First sign-in</th><th>Last sign-out</th><th class="num">Hours</th></tr></thead>
+      <tbody>
+        <% summary.present.forEach(function (r) { %>
+          <tr>
+            <td data-label="Name"><strong><%= r.name %></strong> <span class="muted small"><%= r.staff_id %></span></td>
+            <td data-label="Department"><%= r.department || '—' %></td>
+            <td data-label="First sign-in" class="nowrap"><%= time.fmtTime(r.first_in) %><% if (r.is_late) { %> <span class="tag tag-warn">late</span><% } %></td>
+            <td data-label="Last sign-out" class="nowrap">
+              <% if (r.still_in) { %><span class="tag <%= isToday ? 'tag-green' : 'tag-red' %>"><%= isToday ? 'still in' : 'not signed out' %></span>
+              <% } else { %><%= time.fmtTime(r.last_out) %><% } %>
+            </td>
+            <td data-label="Hours" class="num"><%= time.fmtDuration(r.minutes) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <h2>Late arrivals (<%= summary.late.length %>)</h2>
+    <% if (!summary.late.length) { %><p class="muted">No late arrivals.</p><% } else { %>
+      <table class="table">
+        <tbody>
+          <% summary.late.forEach(function (r) { %>
+            <tr><td><%= r.name %></td><td class="num"><%= time.fmtTime(r.first_in) %></td></tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </section>
+
+  <section class="card">
+    <h2>Absent (<%= summary.absent.length %>)</h2>
+    <% if (!summary.absent.length) { %><p class="muted">Everyone was present.</p><% } else { %>
+      <table class="table">
+        <tbody>
+          <% summary.absent.forEach(function (r) { %>
+            <tr><td><%= r.name %></td><td class="muted"><%= r.department || '' %></td></tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </section>
+</div>
+
+<%- include('../partials/footer') %>

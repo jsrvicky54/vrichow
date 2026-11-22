@@ -1,0 +1,38 @@
+<%
+  // Shows old -> new values of an audit row in plain language.
+  var labels = {
+    sign_in_at: 'Sign in', sign_out_at: 'Sign out', note: 'Note', entered_late: 'Entered later',
+    staff_id: 'Staff ID', name: 'Name', department: 'Department', role: 'Role', active: 'Active'
+  };
+  var fmt = function (k, v) {
+    if (v === null || v === undefined || v === '') return '(empty)';
+    if (/_at$/.test(k)) return time.fmtDateTime(v);
+    if (typeof v === 'boolean') return v ? 'Yes' : 'No';
+    return String(v);
+  };
+  var o = entry.old_value || {};
+  var n = entry.new_value || {};
+  var keys = Object.keys(labels).filter(function (k) { return k in o || k in n; });
+  var changed = keys.filter(function (k) { return JSON.stringify(o[k]) !== JSON.stringify(n[k]); });
+%>
+<% if (entry.action === 'attendance.delete') { %>
+  <ul class="diff">
+    <li>Deleted entry for <%= o.name %> (<%= o.staff_id %>)</li>
+    <li>Was: <%= fmt('sign_in_at', o.sign_in_at) %> → <%= fmt('sign_out_at', o.sign_out_at) %></li>
+    <% if (o.note) { %><li>Note: <%= o.note %></li><% } %>
+  </ul>
+<% } else if (entry.action === 'attendance.update' || entry.action === 'user.update' || entry.action === 'user.activate' || entry.action === 'user.deactivate') { %>
+  <ul class="diff">
+    <% if (o.name) { %><li><strong><%= o.name %></strong> (<%= o.staff_id %>)</li><% } %>
+    <% if (!changed.length) { %><li class="muted">No values changed.</li><% } %>
+    <% changed.forEach(function (k) { %>
+      <li><%= labels[k] %>: <del><%= fmt(k, o[k]) %></del> → <ins><%= fmt(k, n[k]) %></ins></li>
+    <% }) %>
+  </ul>
+<% } else if (entry.action === 'user.create') { %>
+  <ul class="diff"><li>Created <%= n.role === 'admin' ? 'admin' : 'staff' %> account <strong><%= n.name %></strong> (<%= n.staff_id %>)<%= n.department ? ', ' + n.department : '' %></li></ul>
+<% } else if (entry.action === 'user.reset_password') { %>
+  <ul class="diff"><li>Reset password for <strong><%= n.name %></strong> (<%= n.staff_id %>)</li></ul>
+<% } else { %>
+  <ul class="diff"><li class="muted">—</li></ul>
+<% } %>
