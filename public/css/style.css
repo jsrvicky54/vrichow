@@ -258,3 +258,74 @@ textarea { min-height: 80px; resize: vertical; }
 .ebook-edit-button { margin: .35rem 0 0; }
 .ebook-editor-card { padding: .5rem; }
 .ebook-editor { height: 75vh; min-height: 600px; }
+
+
+/* Biotech-inspired workspace and login */
+body {
+    background: radial-gradient(ellipse at 82% 8%, rgba(84,193,196,.28), transparent 34%), radial-gradient(ellipse at 8% 82%, rgba(87,130,205,.18), transparent 38%), linear-gradient(135deg,#e8f1f5 0%,#f5f8f8 48%,#e1efec 100%);
+    background-attachment: fixed;
+}
+body::before {
+    background: radial-gradient(circle at 12% 18%,rgba(31,151,174,.38) 0 2px,transparent 3px) 0 0/210px 210px, radial-gradient(circle at 78% 12%,rgba(61,132,190,.32) 0 3px,transparent 4px) 0 0/280px 280px, radial-gradient(circle at 88% 72%,rgba(35,155,137,.28) 0 4px,transparent 5px) 0 0/330px 330px, radial-gradient(circle at 18% 82%,rgba(47,111,176,.24) 0 2px,transparent 3px) 0 0/250px 250px;
+    animation: particle-drift 32s ease-in-out infinite alternate;
+}
+body::after {
+    background-image: linear-gradient(rgba(19,97,129,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(19,97,129,.035) 1px,transparent 1px);
+    background-size: 52px 52px;
+}
+.login-layout { display:grid; align-items:center; gap:clamp(2rem,6vw,5.5rem); max-width:1000px; min-height:min(690px,calc(100vh - 150px)); margin:0 auto; padding:2rem 0; }
+.login-story { position:relative; padding:1rem 0; }
+.login-eyebrow,.login-card-kicker { display:flex; align-items:center; gap:.55rem; margin:0 0 1.2rem; color:#157b85; font-size:.73rem; font-weight:800; letter-spacing:.14em; }
+.live-dot { width:.5rem; height:.5rem; border-radius:50%; background:#21ad8a; box-shadow:0 0 0 4px rgba(33,173,138,.13); }
+.login-story h1 { margin:0; color:#16374b; font-size:clamp(2.35rem,5vw,4rem); font-weight:750; letter-spacing:-.055em; line-height:1.08; }
+.login-story h1 span { color:#087d88; }
+.login-intro { max-width:440px; margin:1.15rem 0 1.5rem; color:#536d7c; font-size:1.04rem; line-height:1.8; }
+.science-art { position:relative; width:min(100%,440px); height:220px; overflow:hidden; border:1px solid rgba(255,255,255,.72); border-radius:22px; background:radial-gradient(ellipse at 52% 52%,rgba(42,166,166,.16),transparent 48%),linear-gradient(130deg,rgba(255,255,255,.55),rgba(214,235,236,.34)); box-shadow:inset 0 1px rgba(255,255,255,.8),0 18px 45px rgba(24,76,100,.07); }
+.science-art::before,.science-art::after { position:absolute; content:""; width:1px; height:125%; top:-12%; left:50%; background:linear-gradient(transparent,rgba(20,128,145,.25),transparent); transform:rotate(58deg); }
+.science-art::after { transform:rotate(-58deg); }
+.science-orbit { position:absolute; left:50%; top:50%; width:170px; height:170px; border:1px solid rgba(19,133,148,.28); border-radius:50%; }
+.science-orbit-one { transform:translate(-50%,-50%); animation:orbit-spin 24s linear infinite; }
+.science-orbit-two { width:220px; height:112px; border-color:rgba(68,128,184,.24); transform:translate(-50%,-50%) rotate(-32deg); animation:orbit-breathe 8s ease-in-out infinite alternate; }
+.science-core { position:absolute; left:50%; top:50%; width:25px; height:25px; border:5px solid rgba(255,255,255,.9); border-radius:50%; background:#15999a; box-shadow:0 0 0 8px rgba(21,153,154,.12),0 0 32px rgba(21,153,154,.55); transform:translate(-50%,-50%); animation:core-glow 4s ease-in-out infinite; }
+.science-node { position:absolute; width:11px; height:11px; border:3px solid rgba(255,255,255,.95); border-radius:50%; background:#55a7d2; box-shadow:0 0 15px rgba(65,153,194,.55); animation:node-float 5s ease-in-out infinite alternate; }
+.science-node-one { left:27%; top:27%; }
+.science-node-two { right:24%; top:28%; background:#64b99c; animation-delay:-2s; }
+.science-node-three { left:32%; bottom:20%; background:#64b99c; animation-delay:-1s; }
+.science-node-four { right:28%; bottom:23%; animation-delay:-3s; }
+.science-label { position:absolute; color:#548090; font-size:.57rem; font-weight:750; letter-spacing:.17em; }
+.science-label-one { left:8%; top:20%; }
+.science-label-two { right:7%; bottom:18%; }
+.login-values { display:flex; flex-wrap:wrap; gap:.7rem 1.2rem; margin-top:1.2rem; }
+.login-values span { color:#587281; font-size:.82rem; font-weight:600; }
+.login-values i { margin-right:.25rem; color:#138b83; font-style:normal; }
+.login-card { width:100%; max-width:420px; justify-self:end; margin:0; padding:clamp(1.5rem,4vw,2.25rem); border:1px solid rgba(255,255,255,.9); border-radius:20px; background:rgba(255,255,255,.84); box-shadow:0 28px 75px rgba(24,68,87,.15),0 2px 6px rgba(24,68,87,.05); backdrop-filter:blur(18px); }
+.login-card-heading { margin-bottom:1.6rem; }
+.login-lock { display:grid; width:2.5rem; height:2.5rem; place-items:center; margin-bottom:1.2rem; border:1px solid rgba(18,132,140,.15); border-radius:10px; background:#e9f6f3; color:#087e83; font-size:1.25rem; font-weight:700; }
+.login-card-kicker { margin-bottom:.35rem; font-size:.66rem; }
+.login-card-heading h2 { margin:0 0 .25rem; color:#18384b; font-size:1.65rem; letter-spacing:-.035em; }
+.login-card-heading .muted { margin:0; font-size:.9rem; }
+.login-card label { color:#294858; font-size:.88rem; }
+.login-card input { min-height:48px; border-color:#dce7ea; border-radius:9px; background:rgba(255,255,255,.9); }
+.login-card input:focus { outline-color:rgba(14,133,143,.2); border-color:#168c92; }
+.login-card .btn-primary { min-height:48px; border-radius:9px; background:linear-gradient(110deg,#087b86,#119a91); box-shadow:0 8px 18px rgba(12,132,139,.2); }
+.login-card .btn-primary:hover { background:linear-gradient(110deg,#076875,#0d827d); }
+.login-card .btn-primary span { margin-left:.35rem; font-size:1.1em; }
+.login-help { margin:1rem 0 1.2rem; line-height:1.6; }
+.login-secure { padding-top:1rem; border-top:1px solid #e8eff0; color:#65808b; font-size:.76rem; text-align:center; }
+.login-secure span { margin-right:.35rem; color:#1ba482; font-size:.66rem; }
+@keyframes particle-drift { from { transform:translate3d(-5px,-3px,0); } to { transform:translate3d(8px,7px,0); } }
+@keyframes orbit-spin { to { transform:translate(-50%,-50%) rotate(360deg); } }
+@keyframes orbit-breathe { from { opacity:.58; } to { opacity:1; } }
+@keyframes core-glow { 50% { box-shadow:0 0 0 12px rgba(21,153,154,.08),0 0 40px rgba(21,153,154,.68); } }
+@keyframes node-float { to { translate:0 -7px; } }
+@media (min-width:800px) { .login-layout { grid-template-columns:minmax(0,1fr) minmax(340px,420px); } }
+@media (max-width:799px) {
+    .login-layout { max-width:520px; gap:1.5rem; min-height:0; padding:1rem 0; }
+    .login-story { padding:.5rem 0 0; }
+    .login-story h1 { font-size:clamp(2.2rem,8vw,3.2rem); }
+    .login-intro { margin:.8rem 0 1rem; font-size:.95rem; }
+    .science-art { height:150px; }
+    .login-values { display:none; }
+    .login-card { justify-self:stretch; max-width:none; }
+}
+@media (prefers-reduced-motion:reduce) { body::before,.science-orbit,.science-orbit-two,.science-core,.science-node { animation:none; } }
