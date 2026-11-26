@@ -75,8 +75,8 @@
             <li>
               <a href="/staff/ebooks/<%= document.id %>/download"><%= document.title %></a>
               <span class="muted small"><%= document.filename %></span>
-              <% if (editorAvailable && document.filename.toLowerCase().endsWith('.xlsx')) { %>
-                <a class="btn btn-small ebook-edit-button" href="/staff/ebooks/<%= document.id %>/edit">Edit spreadsheet</a>
+              <% if (editorAvailable && (document.filename.toLowerCase().endsWith('.xlsx') || document.filename.toLowerCase().endsWith('.docx'))) { %>
+                <a class="btn btn-small ebook-edit-button" href="/staff/ebooks/<%= document.id %>/edit">Edit online</a>
               <% } %>
             </li>
           <% }) %>

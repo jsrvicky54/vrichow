@@ -56,10 +56,11 @@ router.get('/ebooks/:id/edit', async (req, res, next) => {
       !req.user.department ||
       document.department.trim().toLowerCase() !== req.user.department.trim().toLowerCase()
     ) return next();
-    if (path.extname(document.filename).toLowerCase() !== '.xlsx') {
+    const extension = path.extname(document.filename).toLowerCase();
+    if (!['.xlsx', '.docx'].includes(extension)) {
       return res.status(415).render('error', {
-        title: 'Spreadsheet required',
-        message: 'Only .xlsx workbooks can be edited in the spreadsheet editor.',
+        title: 'Office document required',
+        message: 'Only .xlsx workbooks and .docx documents can be edited online.',
       });
     }
     const settings = onlyoffice.getSettings();
@@ -80,9 +81,9 @@ router.get('/ebooks/:id/edit', async (req, res, next) => {
     const callbackUrl = new URL(`/onlyoffice/callback/${id}`, baseUrl);
     callbackUrl.searchParams.set('token', callbackToken);
     const editorConfig = {
-      documentType: 'cell',
+      documentType: extension === '.xlsx' ? 'cell' : 'word',
       document: {
-        fileType: 'xlsx',
+        fileType: extension.slice(1),
         key,
         title: document.title,
         url: fileUrl.href,

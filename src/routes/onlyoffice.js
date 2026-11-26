@@ -5,6 +5,7 @@ const { getSettings, verifyToken } = require('../lib/onlyoffice');
 const router = express.Router();
 const MAX_FILE_BYTES = 3 * 1024 * 1024;
 const XLSX_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+const DOCX_TYPE = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
 function parseId(value) {
   const id = Number(value);
@@ -20,9 +21,12 @@ router.get('/file/:id', async (req, res, next) => {
       return res.sendStatus(401);
     }
     const document = await ebooks.findById(id);
-    if (!document || !document.filename.toLowerCase().endsWith('.xlsx')) return res.sendStatus(404);
+    if (!document) return res.sendStatus(404);
+    const isSpreadsheet = document.filename.toLowerCase().endsWith('.xlsx');
+    const isWordDocument = document.filename.toLowerCase().endsWith('.docx');
+    if (!isSpreadsheet && !isWordDocument) return res.sendStatus(404);
     res.set({
-      'Content-Type': XLSX_TYPE,
+      'Content-Type': isSpreadsheet ? XLSX_TYPE : DOCX_TYPE,
       'Content-Disposition': `inline; filename="${document.filename.replace(/["\\\r\n]/g, '_')}"`,
       'X-Content-Type-Options': 'nosniff',
       'Cache-Control': 'private, no-store',

@@ -36,7 +36,8 @@ to run and maintain.
   10:00 AM by default).
 - **Department E-Books**: admins can upload private DOC, DOCX, PDF and XLSX
   files up to 3 MB; staff can access files only when their department matches.
-  XLSX workbooks can be edited in the browser when ONLYOFFICE Docs is configured.
+  XLSX workbooks and DOCX documents can be edited in the browser when
+  ONLYOFFICE Docs is configured.
 
 To enable workbook editing, deploy an HTTPS ONLYOFFICE Docs server and set
 `ONLYOFFICE_DOCS_URL` plus a random 32-byte `ONLYOFFICE_JWT_SECRET` in the
