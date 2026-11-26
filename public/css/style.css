@@ -403,3 +403,165 @@ body:has(.login-layout) .login-layout { position:relative; isolation:isolate; ov
 body:has(.login-layout) .login-layout::before { content:""; position:absolute; z-index:-1; inset:-10% 0; pointer-events:none; border-radius:50%; filter:blur(54px); opacity:.82; background:radial-gradient(ellipse 42% 54% at 18% 32%,rgba(0,226,194,.24),transparent 72%),radial-gradient(ellipse 42% 50% at 82% 36%,rgba(79,106,255,.28),transparent 72%),radial-gradient(ellipse 54% 40% at 58% 88%,rgba(0,190,160,.2),transparent 72%); animation:aurora-flow 26s ease-in-out infinite alternate; }
 @keyframes aurora-flow { 0% { transform:translate3d(-1.5%,-1%,0) scale(.98); opacity:.68; } 50% { opacity:.96; } 100% { transform:translate3d(1.5%,1%,0) scale(1.04); opacity:.78; } }
 @media (prefers-reduced-motion:reduce) { body:has(.login-layout)::before,body:has(.login-layout) .login-layout::before,body:has(.login-layout) .live-dot { animation:none; } }
+/* Cinematic biotech login refresh */
+body:has(.login-layout) {
+  color: #f1f8ff;
+  background:
+    radial-gradient(ellipse at 2% 52%, rgba(0, 226, 194, .28), transparent 38%),
+    radial-gradient(ellipse at 91% 4%, rgba(72, 108, 255, .32), transparent 36%),
+    radial-gradient(ellipse at 76% 88%, rgba(109, 52, 209, .2), transparent 40%),
+    linear-gradient(125deg, #04101d 0%, #091b32 49%, #061020 100%);
+}
+body:has(.login-layout) .topbar {
+  background: rgba(3, 13, 26, .8);
+  border-bottom-color: rgba(119, 239, 230, .17);
+  backdrop-filter: blur(18px);
+}
+body:has(.login-layout) .brand-mark {
+  color: #061827;
+  background: linear-gradient(145deg, #82ffe0, #52bfff);
+  box-shadow: 0 0 28px rgba(58, 223, 208, .32);
+}
+body:has(.login-layout) .login-layout {
+  max-width: 1120px;
+  min-height: min(760px, calc(100vh - 120px));
+  gap: clamp(2.5rem, 7vw, 7rem);
+}
+body:has(.login-layout) .login-story h1 {
+  font-size: clamp(2.8rem, 5.2vw, 5rem);
+  line-height: 1.01;
+  letter-spacing: -.065em;
+  text-wrap: balance;
+}
+body:has(.login-layout) .login-story h1 span {
+  background: linear-gradient(100deg, #74ffe2 0%, #54c9ff 52%, #9a9cff 100%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+body:has(.login-layout) .login-eyebrow,
+body:has(.login-layout) .login-card-kicker { color: #8bf3e7; }
+body:has(.login-layout) .login-intro {
+  max-width: 470px;
+  color: #bfd0e1;
+  font-size: 1.08rem;
+}
+body:has(.login-layout) .science-art {
+  width: min(100%, 500px);
+  height: 260px;
+  margin-top: 1.9rem;
+  border-color: rgba(126, 238, 236, .26);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(24, 226, 197, .26), transparent 15%),
+    radial-gradient(ellipse at 50% 50%, rgba(32, 132, 234, .22), transparent 54%),
+    linear-gradient(135deg, rgba(14, 43, 69, .74), rgba(11, 25, 50, .46));
+  box-shadow: inset 0 1px rgba(230, 255, 255, .15), 0 25px 90px rgba(0, 0, 0, .28), 0 0 60px rgba(25, 199, 205, .09);
+}
+body:has(.login-layout) .science-art::before,
+body:has(.login-layout) .science-art::after {
+  width: 130%;
+  height: 1px;
+  top: 50%;
+  left: -15%;
+  background: linear-gradient(90deg, transparent, rgba(95, 231, 236, .5), transparent);
+  filter: drop-shadow(0 0 5px rgba(65, 228, 223, .5));
+  animation: laser-sweep 7s ease-in-out infinite alternate;
+}
+body:has(.login-layout) .science-art::after {
+  transform: rotate(-58deg);
+  animation-delay: -3.5s;
+}
+body:has(.login-layout) .science-orbit {
+  border-color: rgba(99, 242, 229, .58);
+  box-shadow: 0 0 22px rgba(62, 226, 218, .12);
+}
+body:has(.login-layout) .science-orbit-two {
+  width: 270px;
+  height: 130px;
+  border-color: rgba(120, 157, 255, .56);
+}
+body:has(.login-layout) .science-core {
+  width: 31px;
+  height: 31px;
+  background: linear-gradient(140deg, #8dffe4, #33a9ff);
+  box-shadow: 0 0 0 10px rgba(43, 221, 216, .13), 0 0 48px rgba(53, 201, 255, .9);
+}
+body:has(.login-layout) .science-node {
+  width: 13px;
+  height: 13px;
+  border-color: rgba(231, 255, 255, .95);
+  background: #64dcff;
+  box-shadow: 0 0 18px rgba(88, 215, 255, .9);
+}
+body:has(.login-layout) .science-node-two,
+body:has(.login-layout) .science-node-three { background: #69ffd5; }
+body:has(.login-layout) .science-label { color: #a4eff1; }
+body:has(.login-layout) .login-values { gap: .75rem 1.5rem; margin-top: 1.4rem; }
+body:has(.login-layout) .login-values span { color: #d3e2ef; }
+body:has(.login-layout) .login-values i { color: #7affdc; }
+body:has(.login-layout) .login-card {
+  max-width: 440px;
+  padding: clamp(1.7rem, 3vw, 2.4rem);
+  border-color: rgba(174, 218, 241, .24);
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(16, 38, 63, .93), rgba(7, 21, 40, .9));
+  box-shadow: 0 38px 110px rgba(0, 0, 0, .48), inset 0 1px rgba(255, 255, 255, .12), 0 0 70px rgba(64, 132, 255, .1);
+  backdrop-filter: blur(24px);
+}
+body:has(.login-layout) .login-lock {
+  width: 3rem;
+  height: 3rem;
+  border-color: rgba(103, 243, 229, .3);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(39, 195, 190, .22), rgba(75, 120, 255, .18));
+  color: #8fffea;
+  box-shadow: 0 0 28px rgba(50, 218, 202, .13);
+}
+body:has(.login-layout) .login-card-heading h2 { color: #f5faff; font-size: 1.85rem; }
+body:has(.login-layout) .login-card-heading .muted,
+body:has(.login-layout) .login-help { color: #b6c8d9; }
+body:has(.login-layout) .login-card label { color: #e2edf6; }
+body:has(.login-layout) .login-card input {
+  min-height: 52px;
+  border-color: rgba(161, 197, 226, .28);
+  border-radius: 12px;
+  background: rgba(3, 16, 31, .75);
+  color: #f6fbff;
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+body:has(.login-layout) .login-card input:focus {
+  border-color: #69e9dd;
+  background: rgba(3, 22, 38, .94);
+  box-shadow: 0 0 0 4px rgba(73, 221, 215, .12), 0 0 28px rgba(46, 206, 211, .13);
+}
+body:has(.login-layout) .login-card .btn-primary {
+  min-height: 54px;
+  border-radius: 12px;
+  background: linear-gradient(100deg, #00c6a9, #239ce9 56%, #7169f5);
+  box-shadow: 0 12px 32px rgba(30, 147, 222, .3), inset 0 1px rgba(255, 255, 255, .24);
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+body:has(.login-layout) .login-card .btn-primary:hover {
+  background: linear-gradient(100deg, #12dbb8, #35b0fa 56%, #877aff);
+  box-shadow: 0 16px 38px rgba(30, 147, 222, .4), inset 0 1px rgba(255, 255, 255, .3);
+  filter: saturate(1.1);
+  transform: translateY(-2px);
+}
+body:has(.login-layout) .login-secure { border-top-color: rgba(169, 207, 231, .18); color: #bfd0df; }
+body:has(.login-layout) .login-secure span { color: #7affdc; }
+body:has(.login-layout) footer { color: #aac0d1; }
+@keyframes laser-sweep {
+  from { opacity: .35; translate: -5px 0; }
+  to { opacity: .95; translate: 5px 0; }
+}
+@media (max-width: 799px) {
+  body:has(.login-layout) .login-layout { min-height: 0; padding: 1.6rem 0 2.4rem; gap: 1.3rem; }
+  body:has(.login-layout) .login-story h1 { font-size: clamp(2.5rem, 10vw, 3.8rem); }
+  body:has(.login-layout) .science-art { height: 190px; margin-top: 1.2rem; }
+  body:has(.login-layout) .login-card { justify-self: stretch; max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body:has(.login-layout) .science-art::before,
+  body:has(.login-layout) .science-art::after,
+  body:has(.login-layout) .login-card .btn-primary { animation: none; transition: none; }
+}
