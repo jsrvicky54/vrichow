@@ -338,3 +338,35 @@ body::after {
     .login-story h1 span { display:block; white-space:nowrap; }
     .login-card { padding:clamp(1.25rem,2.4vw,1.8rem); }
 }
+
+
+/* Richer ambient color and restrained scientific motion. */
+body {
+    background: radial-gradient(ellipse at 9% 12%,rgba(13,164,168,.2),transparent 34%),radial-gradient(ellipse at 92% 18%,rgba(90,119,216,.18),transparent 30%),radial-gradient(ellipse at 68% 100%,rgba(48,180,146,.2),transparent 35%),linear-gradient(135deg,#e8f3f5 0%,#eef3fb 52%,#e0f0eb 100%);
+    background-attachment:fixed;
+}
+body::before {
+    background: radial-gradient(ellipse 42% 60% at 8% 18%,rgba(11,154,172,.2),transparent 74%),radial-gradient(ellipse 40% 56% at 94% 76%,rgba(94,117,214,.17),transparent 72%),radial-gradient(circle at 12% 18%,rgba(31,151,174,.42) 0 2px,transparent 3px) 0 0/210px 210px,radial-gradient(circle at 78% 12%,rgba(61,132,190,.34) 0 3px,transparent 4px) 0 0/280px 280px,radial-gradient(circle at 88% 72%,rgba(35,155,137,.32) 0 4px,transparent 5px) 0 0/330px 330px,radial-gradient(circle at 18% 82%,rgba(47,111,176,.26) 0 2px,transparent 3px) 0 0/250px 250px,repeating-linear-gradient(45deg,transparent 0 139px,rgba(22,140,151,.035) 140px,transparent 141px 280px);
+    animation: ambient-drift 34s ease-in-out infinite alternate;
+}
+body::after {
+    background-image:linear-gradient(rgba(19,97,129,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(19,97,129,.04) 1px,transparent 1px);
+    background-size:52px 52px;
+    mask-image:radial-gradient(ellipse at 50% 45%,#000 26%,transparent 100%);
+}
+.login-story h1 span {
+    background:linear-gradient(100deg,#087d88 0%,#139b8d 56%,#5579ce 100%);
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.login-card { box-shadow:0 30px 84px rgba(27,72,95,.18),0 2px 6px rgba(24,68,87,.05); }
+.live-dot { animation:signal-pulse 3.2s ease-out infinite; }
+@keyframes ambient-drift {
+    from { transform:translate3d(-.7%,-.4%,0) scale(1); }
+    to { transform:translate3d(.7%,.5%,0) scale(1.035); }
+}
+@keyframes signal-pulse {
+    0%,100% { box-shadow:0 0 0 4px rgba(33,173,138,.12); }
+    50% { box-shadow:0 0 0 8px rgba(33,173,138,.025); }
+}
+@media (prefers-reduced-motion:reduce) { body::before,.live-dot { animation:none; } }
