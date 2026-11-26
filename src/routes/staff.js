@@ -1,5 +1,6 @@
 const express = require('express');
 const attendance = require('../services/attendance');
+const ebooks = require('../services/ebooks');
 const time = require('../lib/time');
 const { requireRole, requirePasswordChanged } = require('../middleware/auth');
 
@@ -27,13 +28,35 @@ router.get('/', async (req, res, next) => {
     const status = await attendance.getStatus(req.user.id);
     const today = await attendance.listForUser(req.user.id, time.dayRange(time.todayKey()));
     const todayMinutes = today.reduce((s, r) => s + (r.minutes || 0), 0);
+    const ebookDocuments = await ebooks.listForDepartment(req.user.department);
     res.render('staff/home', {
       title: 'Sign in / Sign out',
       status,
       today,
       todayMinutes,
+      ebookDocuments,
       serverNow: Date.now(),
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/ebooks/:id/download', async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1 || id >= 2147483647) return next();
+    const document = await ebooks.findById(id);
+    if (
+      !document ||
+      !req.user.department ||
+      document.department.trim().toLowerCase() !== req.user.department.trim().toLowerCase()
+    ) return next();
+
+    res.set('Content-Type', 'application/octet-stream');
+    res.attachment(document.filename);
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.send(document.file_data);
   } catch (err) {
     next(err);
   }

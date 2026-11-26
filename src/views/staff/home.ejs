@@ -60,4 +60,27 @@
   <p><a href="/staff/history">See my full history →</a></p>
 </section>
 
+<section class="card">
+  <h2>Department E-Book</h2>
+  <% if (!user.department) { %>
+    <p class="muted">Your account is not assigned to a department. Contact an administrator.</p>
+  <% } else { %>
+    <details class="ebook-department">
+      <summary><%= user.department %> · <%= ebookDocuments.length %> item<%= ebookDocuments.length === 1 ? '' : 's' %></summary>
+      <% if (!ebookDocuments.length) { %>
+        <p class="muted">No E-Books have been uploaded for this department yet.</p>
+      <% } else { %>
+        <ul class="ebook-list">
+          <% ebookDocuments.forEach(function (document) { %>
+            <li>
+              <a href="/staff/ebooks/<%= document.id %>/download"><%= document.title %></a>
+              <span class="muted small"><%= document.filename %></span>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </details>
+  <% } %>
+</section>
+
 <%- include('../partials/footer') %>

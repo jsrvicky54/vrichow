@@ -34,6 +34,9 @@ to run and maintain.
   (who, what, when, old and new values).
 - **Daily summary**: present, absent and late arrivals (first sign-in after
   10:00 AM by default).
+- **Department E-Books**: admins can upload private DOC, DOCX and PDF files up
+  to 3 MB; staff can access files only when their department matches. Files are
+  stored in PostgreSQL. Excel workbook editing is not included yet.
 
 **Security**
 - Passwords hashed with **bcrypt** (12 rounds). Never stored in plain text.

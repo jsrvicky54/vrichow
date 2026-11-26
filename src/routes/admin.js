@@ -3,13 +3,71 @@ const db = require('../db');
 const users = require('../services/users');
 const attendance = require('../services/attendance');
 const audit = require('../services/audit');
+const ebooks = require('../services/ebooks');
 const time = require('../lib/time');
 const exporter = require('../lib/export');
 const { generateTempPassword, validatePassword } = require('../lib/passwords');
 const { requireRole, requirePasswordChanged } = require('../middleware/auth');
+const path = require('path');
 
 const router = express.Router();
 router.use(requireRole('admin'), requirePasswordChanged);
+
+function isValidEbookFile(file) {
+  if (!file) return false;
+  const extension = path.extname(file.originalname).toLowerCase();
+  const data = file.buffer;
+  if (extension === '.pdf') return data.subarray(0, 5).toString('ascii') === '%PDF-';
+  if (extension === '.doc') return data.subarray(0, 8).equals(Buffer.from('D0CF11E0A1B11AE1', 'hex'));
+  if (extension === '.docx') {
+    return data.subarray(0, 4).equals(Buffer.from([0x50, 0x4b, 0x03, 0x04]));
+  }
+  return false;
+}
+
+router.get('/ebooks', async (req, res, next) => {
+  try {
+    res.render('admin/ebooks', {
+      title: 'Department E-Books',
+      documents: await ebooks.listAll(),
+      error: null,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/ebooks', async (req, res, next) => {
+  const department = cleanText(req.body.department, 100);
+  const title = cleanText(req.body.title, 150);
+  const file = req.file;
+  const fail = async (error) => res.status(400).render('admin/ebooks', {
+    title: 'Department E-Books',
+    documents: await ebooks.listAll(),
+    error,
+  });
+
+  try {
+    if (!department) return fail('Enter a department name.');
+    if (!title) return fail('Enter a title for this E-Book.');
+    if (!isValidEbookFile(file)) return fail('Choose a valid .doc, .docx, or .pdf file.');
+
+    const filename = path.basename(file.originalname.replace(/\\/g, '/'))
+      .replace(/[\u0000-\u001f\u007f"]/g, '_')
+      .slice(0, 200) || 'document';
+    await ebooks.create({
+      department,
+      title,
+      filename,
+      content: file.buffer,
+      uploadedBy: req.user.id,
+    });
+    req.session.flash = { type: 'success', text: `${title} was added to ${department}.` };
+    res.redirect('/admin/ebooks');
+  } catch (err) {
+    next(err);
+  }
+});
 
 const DISPLAY_LIMIT = 1000;
 const MAX_RANGE_DAYS = 366;

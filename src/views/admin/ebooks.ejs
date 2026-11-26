@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+<h1>Department E-Books</h1>
+<section class="card">
+  <h2>Upload a department document</h2>
+  <p class="muted small">Files are private and available only to staff in the selected department. Maximum size: 3 MB.</p>
+  <% if (error) { %><div class="alert alert-error" role="alert"><%= error %></div><% } %>
+  <form method="post" action="/admin/ebooks" enctype="multipart/form-data">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label for="department">Department</label>
+    <input id="department" name="department" maxlength="100" required>
+    <label for="title">Document title</label>
+    <input id="title" name="title" maxlength="150" required>
+      <label for="document">File (.doc, .docx, or .pdf)</label>
+      <input id="document" name="document" type="file" accept=".doc,.docx,.pdf" required>
+    <button class="btn btn-primary" type="submit">Upload E-Book</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Uploaded documents</h2>
+  <% if (!documents.length) { %>
+    <p class="muted">No E-Books uploaded yet.</p>
+  <% } else { %>
+    <ul class="ebook-list">
+      <% documents.forEach(function (document) { %>
+        <li><strong><%= document.department %></strong> · <%= document.title %> <span class="muted small">(<%= document.filename %>)</span></li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>

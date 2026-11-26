@@ -7,7 +7,8 @@ const helmet = require('helmet');
 const config = require('./config');
 const { pool } = require('./db');
 const csrf = require('./middleware/csrf');
-const { loadUser } = require('./middleware/auth');
+const { loadUser, requireRole, requirePasswordChanged } = require('./middleware/auth');
+const ebookUpload = require('./middleware/ebookUpload');
 const time = require('./lib/time');
 
 const authRoutes = require('./routes/auth');
@@ -72,8 +73,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(csrf);
 app.use(loadUser);
+app.post('/admin/ebooks', requireRole('admin'), requirePasswordChanged, ebookUpload);
+app.use(csrf);
 
 // One-time messages ("You signed in at 09:12 AM").
 app.use((req, res, next) => {
