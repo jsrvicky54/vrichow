@@ -329,3 +329,12 @@ body::after {
     .login-card { justify-self:stretch; max-width:none; }
 }
 @media (prefers-reduced-motion:reduce) { body::before,.science-orbit,.science-orbit-two,.science-core,.science-node { animation:none; } }
+
+
+/* Keep the desktop composition balanced and above the fold. */
+@media (min-width:800px) {
+    .login-layout { min-height:min(580px,calc(100vh - 220px)); padding:1rem 0; gap:clamp(2rem,4vw,4rem); }
+    .login-story h1 { font-size:clamp(2.1rem,3.35vw,3.2rem); }
+    .login-story h1 span { display:block; white-space:nowrap; }
+    .login-card { padding:clamp(1.25rem,2.4vw,1.8rem); }
+}
