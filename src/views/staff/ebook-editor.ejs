@@ -1,0 +1,15 @@
+<%- include('../partials/header') %>
+
+<div class="row-between">
+  <h1><%= document.title %></h1>
+  <a class="btn" href="/staff">Back to staff page</a>
+</div>
+<section class="card ebook-editor-card">
+  <div id="onlyoffice-editor" class="ebook-editor" data-editor-config="<%= JSON.stringify(editorConfig) %>">
+    Loading spreadsheet editor…
+  </div>
+</section>
+<script src="<%= docsApiUrl %>" defer></script>
+<script src="/js/ebook-editor.js" defer></script>
+
+<%- include('../partials/footer') %>

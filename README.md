@@ -34,9 +34,19 @@ to run and maintain.
   (who, what, when, old and new values).
 - **Daily summary**: present, absent and late arrivals (first sign-in after
   10:00 AM by default).
-- **Department E-Books**: admins can upload private DOC, DOCX and PDF files up
-  to 3 MB; staff can access files only when their department matches. Files are
-  stored in PostgreSQL. Excel workbook editing is not included yet.
+- **Department E-Books**: admins can upload private DOC, DOCX, PDF and XLSX
+  files up to 3 MB; staff can access files only when their department matches.
+  XLSX workbooks can be edited in the browser when ONLYOFFICE Docs is configured.
+
+To enable workbook editing, deploy an HTTPS ONLYOFFICE Docs server and set
+`ONLYOFFICE_DOCS_URL` plus a random 32-byte `ONLYOFFICE_JWT_SECRET` in the
+application environment (for Vercel, add both to the project's Environment
+Variables and redeploy). Configure the same JWT secret on the Docs server.
+Set `APP_BASE_URL` to the public portal URL if the
+editor server cannot reach the request host. The portal signs editor and
+callback tokens, checks staff department access, and saves edited XLSX files
+back into PostgreSQL. Without the Docs server and secret, E-Books remain
+downloadable and the editor button stays hidden.
 
 **Security**
 - Passwords hashed with **bcrypt** (12 rounds). Never stored in plain text.

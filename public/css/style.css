@@ -255,3 +255,6 @@ textarea { min-height: 80px; resize: vertical; }
 .ebook-list { margin: .75rem 0 0; padding-left: 1.25rem; }
 .ebook-list li { margin: .5rem 0; }
 .ebook-list .muted { display: block; }
+.ebook-edit-button { margin: .35rem 0 0; }
+.ebook-editor-card { padding: .5rem; }
+.ebook-editor { height: 75vh; min-height: 600px; }

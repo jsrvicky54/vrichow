@@ -41,4 +41,12 @@ async function create({ department, title, filename, content, uploadedBy }) {
   return rows[0];
 }
 
-module.exports = { listForDepartment, listAll, findById, create };
+async function updateFile(id, content) {
+  const result = await db.query(
+    `UPDATE department_ebooks SET file_data = $1 WHERE id = $2`,
+    [content, id]
+  );
+  if (result.rowCount !== 1) throw new Error(`E-Book ${id} was not found while saving.`);
+}
+
+module.exports = { listForDepartment, listAll, findById, create, updateFile };

@@ -1,7 +1,10 @@
 const express = require('express');
+const crypto = require('crypto');
+const path = require('path');
 const attendance = require('../services/attendance');
 const ebooks = require('../services/ebooks');
 const time = require('../lib/time');
+const onlyoffice = require('../lib/onlyoffice');
 const { requireRole, requirePasswordChanged } = require('../middleware/auth');
 
 const router = express.Router();
@@ -35,7 +38,69 @@ router.get('/', async (req, res, next) => {
       today,
       todayMinutes,
       ebookDocuments,
+      editorAvailable: Boolean(onlyoffice.getSettings()),
       serverNow: Date.now(),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/ebooks/:id/edit', async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1 || id >= 2147483647) return next();
+    const document = await ebooks.findById(id);
+    if (
+      !document ||
+      !req.user.department ||
+      document.department.trim().toLowerCase() !== req.user.department.trim().toLowerCase()
+    ) return next();
+    if (path.extname(document.filename).toLowerCase() !== '.xlsx') {
+      return res.status(415).render('error', {
+        title: 'Spreadsheet required',
+        message: 'Only .xlsx workbooks can be edited in the spreadsheet editor.',
+      });
+    }
+    const settings = onlyoffice.getSettings();
+    if (!settings) {
+      return res.status(503).render('error', {
+        title: 'Editor not configured',
+        message: 'The spreadsheet editor is not configured yet. Contact the administrator.',
+      });
+    }
+
+    const key = `ebook-${id}-${crypto.createHash('sha256').update(document.file_data).digest('hex').slice(0, 32)}`;
+    const expires = Math.floor(Date.now() / 1000) + 86400;
+    const baseUrl = process.env.APP_BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const fileToken = onlyoffice.signToken({ scope: 'file', id, exp: Math.floor(Date.now() / 1000) + 300 }, settings.secret);
+    const callbackToken = onlyoffice.signToken({ scope: 'callback', id, key, exp: expires }, settings.secret);
+    const fileUrl = new URL(`/onlyoffice/file/${id}`, baseUrl);
+    fileUrl.searchParams.set('token', fileToken);
+    const callbackUrl = new URL(`/onlyoffice/callback/${id}`, baseUrl);
+    callbackUrl.searchParams.set('token', callbackToken);
+    const editorConfig = {
+      documentType: 'cell',
+      document: {
+        fileType: 'xlsx',
+        key,
+        title: document.title,
+        url: fileUrl.href,
+        permissions: { edit: true, download: false, print: false },
+      },
+      editorConfig: {
+        mode: 'edit',
+        callbackUrl: callbackUrl.href,
+        user: { id: String(req.user.id), name: req.user.name },
+        customization: { autosave: true, forcesave: true },
+      },
+    };
+    editorConfig.token = onlyoffice.signToken(editorConfig, settings.secret);
+    res.render('staff/ebook-editor', {
+      title: document.title,
+      document,
+      editorConfig,
+      docsApiUrl: `${settings.docsUrl}/web-apps/apps/api/documents/api.js`,
     });
   } catch (err) {
     next(err);

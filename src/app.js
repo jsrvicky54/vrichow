@@ -14,8 +14,15 @@ const time = require('./lib/time');
 const authRoutes = require('./routes/auth');
 const staffRoutes = require('./routes/staff');
 const adminRoutes = require('./routes/admin');
+const onlyofficeRoutes = require('./routes/onlyoffice');
 
 const app = express();
+let onlyofficeOrigin;
+try {
+  onlyofficeOrigin = process.env.ONLYOFFICE_DOCS_URL ? new URL(process.env.ONLYOFFICE_DOCS_URL).origin : null;
+} catch {
+  onlyofficeOrigin = null;
+}
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -27,9 +34,11 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", ...(onlyofficeOrigin ? [onlyofficeOrigin] : [])],
         styleSrc: ["'self'"],
         imgSrc: ["'self'", 'data:'],
+        frameSrc: ["'self'", ...(onlyofficeOrigin ? [onlyofficeOrigin] : [])],
+        connectSrc: ["'self'", ...(onlyofficeOrigin ? [onlyofficeOrigin] : [])],
         formAction: ["'self'"],
         frameAncestors: ["'none'"],
       },
@@ -75,6 +84,7 @@ app.use((req, res, next) => {
 
 app.use(loadUser);
 app.post('/admin/ebooks', requireRole('admin'), requirePasswordChanged, ebookUpload);
+app.use('/onlyoffice', onlyofficeRoutes);
 app.use(csrf);
 
 // One-time messages ("You signed in at 09:12 AM").

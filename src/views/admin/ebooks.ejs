@@ -3,7 +3,10 @@
 <h1>Department E-Books</h1>
 <section class="card">
   <h2>Upload a department document</h2>
-  <p class="muted small">Files are private and available only to staff in the selected department. Maximum size: 3 MB.</p>
+  <p class="muted small">Files are private and available only to staff in the selected department. Maximum size: 3 MB. Upload .xlsx workbooks to edit them in the browser.</p>
+  <% if (!editorAvailable) { %>
+    <div class="alert alert-info" role="status">Spreadsheet editing activates after ONLYOFFICE Docs is configured with ONLYOFFICE_DOCS_URL and ONLYOFFICE_JWT_SECRET.</div>
+  <% } %>
   <% if (error) { %><div class="alert alert-error" role="alert"><%= error %></div><% } %>
   <form method="post" action="/admin/ebooks" enctype="multipart/form-data">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -11,8 +14,8 @@
     <input id="department" name="department" maxlength="100" required>
     <label for="title">Document title</label>
     <input id="title" name="title" maxlength="150" required>
-      <label for="document">File (.doc, .docx, or .pdf)</label>
-      <input id="document" name="document" type="file" accept=".doc,.docx,.pdf" required>
+      <label for="document">File (.doc, .docx, .pdf, or .xlsx)</label>
+      <input id="document" name="document" type="file" accept=".doc,.docx,.pdf,.xlsx" required>
     <button class="btn btn-primary" type="submit">Upload E-Book</button>
   </form>
 </section>

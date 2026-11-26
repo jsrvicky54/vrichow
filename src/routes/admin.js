@@ -8,6 +8,7 @@ const time = require('../lib/time');
 const exporter = require('../lib/export');
 const { generateTempPassword, validatePassword } = require('../lib/passwords');
 const { requireRole, requirePasswordChanged } = require('../middleware/auth');
+const onlyoffice = require('../lib/onlyoffice');
 const path = require('path');
 
 const router = express.Router();
@@ -22,6 +23,9 @@ function isValidEbookFile(file) {
   if (extension === '.docx') {
     return data.subarray(0, 4).equals(Buffer.from([0x50, 0x4b, 0x03, 0x04]));
   }
+  if (extension === '.xlsx') {
+    return data.subarray(0, 4).equals(Buffer.from([0x50, 0x4b, 0x03, 0x04]));
+  }
   return false;
 }
 
@@ -30,6 +34,7 @@ router.get('/ebooks', async (req, res, next) => {
     res.render('admin/ebooks', {
       title: 'Department E-Books',
       documents: await ebooks.listAll(),
+      editorAvailable: Boolean(onlyoffice.getSettings()),
       error: null,
     });
   } catch (err) {
@@ -44,13 +49,14 @@ router.post('/ebooks', async (req, res, next) => {
   const fail = async (error) => res.status(400).render('admin/ebooks', {
     title: 'Department E-Books',
     documents: await ebooks.listAll(),
+    editorAvailable: Boolean(onlyoffice.getSettings()),
     error,
   });
 
   try {
     if (!department) return fail('Enter a department name.');
     if (!title) return fail('Enter a title for this E-Book.');
-    if (!isValidEbookFile(file)) return fail('Choose a valid .doc, .docx, or .pdf file.');
+    if (!isValidEbookFile(file)) return fail('Choose a valid .doc, .docx, .pdf, or .xlsx file.');
 
     const filename = path.basename(file.originalname.replace(/\\/g, '/'))
       .replace(/[\u0000-\u001f\u007f"]/g, '_')

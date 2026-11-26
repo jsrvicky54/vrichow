@@ -75,9 +75,15 @@
             <li>
               <a href="/staff/ebooks/<%= document.id %>/download"><%= document.title %></a>
               <span class="muted small"><%= document.filename %></span>
+              <% if (editorAvailable && document.filename.toLowerCase().endsWith('.xlsx')) { %>
+                <a class="btn btn-small ebook-edit-button" href="/staff/ebooks/<%= document.id %>/edit">Edit spreadsheet</a>
+              <% } %>
             </li>
           <% }) %>
         </ul>
+        <% if (!editorAvailable) { %>
+          <p class="muted small">Online editing is not configured yet. Excel workbooks can still be downloaded.</p>
+        <% } %>
       <% } %>
     </details>
   <% } %>
